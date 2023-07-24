@@ -13,6 +13,7 @@ type Storage interface {
 	UpdateAccount(*Account) error
 	GetAccountbyID(int) (*Account, error)
 	CreateListing(*Listing) error
+	GetListings() ([]*Listing, error)
 	GetListingByID(int) (*Listing, error)
 	CreateReservation(*Reservation) error
 }
@@ -183,6 +184,27 @@ func (s *PostgresStore) GetListingByID(id int) (*Listing, error) {
 	}
 
 	return nil, fmt.Errorf("account %d not found", id)
+}
+
+func (s *PostgresStore) GetListings() ([]*Listing, error) {
+	rows, err := s.db.Query(`SELECT * FROM listing`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	listings := []*Listing{}
+
+	for rows.Next() {
+		listing, err := scanIntolisting(rows)
+
+		if err != nil {
+			return nil, err
+		}
+
+		listings = append(listings, listing)
+	}
+	return listings, nil
 }
 
 //reservations

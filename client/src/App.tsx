@@ -1,7 +1,9 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import "./App.css";
+
+import Listing from "./Components/Listing";
 
 const user = {
   name: "Tom Cook",
@@ -36,7 +38,7 @@ export default function App() {
         <body class="h-full">
         ```
       */}
-      <div className="h-full min-h-screen w-full">
+      <div className="h-full min-h-screen w-full min-w-[350px]">
         <Disclosure as="nav" className="bg-white shadow-sm">
           {({ open }) => (
             <>
@@ -64,7 +66,7 @@ export default function App() {
                             item.current
                               ? "border-indigo-500 text-gray-900"
                               : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                            "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+                            "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium",
                           )}
                           aria-current={item.current ? "page" : undefined}
                         >
@@ -111,7 +113,7 @@ export default function App() {
                                   href={item.href}
                                   className={classNames(
                                     active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
+                                    "block px-4 py-2 text-sm text-gray-700",
                                   )}
                                 >
                                   {item.name}
@@ -154,7 +156,7 @@ export default function App() {
                         item.current
                           ? "border-indigo-500 bg-indigo-50 text-indigo-700"
                           : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800",
-                        "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
+                        "block border-l-4 py-2 pl-3 pr-4 text-base font-medium",
                       )}
                       aria-current={item.current ? "page" : undefined}
                     >
@@ -216,6 +218,7 @@ export default function App() {
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
               {/* Your content */}
+              <Listing />
             </div>
           </main>
         </div>

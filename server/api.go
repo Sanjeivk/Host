@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type APIServer struct {
@@ -27,6 +28,7 @@ func (s *APIServer) Run() {
 
 	router.HandleFunc(("/account"), makeHTTPHandleFunc(s.handleAccount))
 	router.HandleFunc(("/listing/{id}"), makeHTTPHandleFunc(s.handleListing))
+	router.HandleFunc(("/listings"), makeHTTPHandleFunc(s.handleGetListings))
 	router.HandleFunc(("/listing/{id}/reservation"), makeHTTPHandleFunc(s.handleReservation))
 	// router.HandleFunc(("/account"), makeHTTPHandleFunc(s.handleAccount))
 	// router.HandleFunc(("/account/{id}"), withJWTAuth(makeHTTPHandleFunc(s.handleAccountByID), s.store))
@@ -34,7 +36,13 @@ func (s *APIServer) Run() {
 
 	log.Println("JSON Server is running on port", s.listenAddr)
 
-	http.ListenAndServe(s.listenAddr, router)
+	// Create a new CORS handler
+	corsHandler := cors.Default()
+
+	// Wrap the router with the CORS handler
+	handler := corsHandler.Handler(router)
+
+	http.ListenAndServe(s.listenAddr, handler)
 }
 
 type apiFunc func(http.ResponseWriter, *http.Request) error
@@ -64,6 +72,13 @@ func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error 
 
 func (s *APIServer) handleListing(w http.ResponseWriter, r *http.Request) error {
 	return s.handleCreateListing(w, r)
+}
+func (s *APIServer) handleGetListings(w http.ResponseWriter, r *http.Request) error {
+	listings, err := s.store.GetListings()
+	if err != nil {
+		return err
+	}
+	return WriteJSON(w, http.StatusOK, listings)
 }
 
 func (s *APIServer) handleReservation(w http.ResponseWriter, r *http.Request) error {
