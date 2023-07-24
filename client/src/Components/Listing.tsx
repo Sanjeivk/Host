@@ -49,12 +49,15 @@ export default function Listing() {
 
     // declare the data fetching function
     const fetchData = async () => {
-      await fetch("http://localhost:3000/listings", {
+      const response = await fetch("http://localhost:3000/listings", {
         method: "GET",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
+      //   setListings(response.json());
+      const listings = await response.json();
+      setListings(listings);
     };
 
     // call the function
@@ -98,7 +101,6 @@ export default function Listing() {
                     </svg>
                   </a>
                 </li>
-                {/* <div><listings}</div> */}
                 <li>
                   <a
                     href={person.linkedinUrl}
