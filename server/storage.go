@@ -9,12 +9,12 @@ import (
 
 type Storage interface {
 	CreateAccount(*Account) error
-	DeleteAccount(int) error
+	DeleteAccount(string) error
 	UpdateAccount(*Account) error
-	GetAccountbyID(int) (*Account, error)
+	GetAccountbyID(string) (*Account, error)
 	CreateListing(*Listing) error
 	GetListings() ([]*Listing, error)
-	GetListingByID(int) (*Listing, error)
+	GetListingByID(string) (*Listing, error)
 	CreateReservation(*Reservation) error
 }
 
@@ -52,12 +52,13 @@ func (s *PostgresStore) Init() error {
 func (s *PostgresStore) CreateAccountTable() error {
 	_, err := s.db.Exec(`
 		CREATE TABLE IF NOT EXISTS account (
-			id SERIAL PRIMARY KEY,
+			id VARCHAR(100) PRIMARY KEY,
 			first_name VARCHAR(50),
 			last_name VARCHAR(50),
 			email VARCHAR(100),
 			phone_number VARCHAR(100),
 			encrypted_password VARCHAR(100),
+			review INT,
 			created_at TIMESTAMP DEFAULT NOW(),
 			updated_at TIMESTAMP DEFAULT NOW(),
 			deleted_at TIMESTAMP DEFAULT NULL
@@ -70,8 +71,8 @@ func (s *PostgresStore) CreateListingTable() error {
 	//		CREATE TYPE event_type AS ENUM ('MMA', 'Formula 1', 'Tennis', 'Golf', 'Football', 'Soccer', 'Basketball', 'Hockey', 'Baseball');
 	_, err := s.db.Exec(`
 		CREATE TABLE IF NOT EXISTS listing (
-			id SERIAL PRIMARY KEY,
-			host_id SERIAL,
+			id VARCHAR(100) PRIMARY KEY,
+			host_id VARCHAR(100),
 			street VARCHAR(255),
 			city VARCHAR(255),
 			state VARCHAR(255),
@@ -99,9 +100,9 @@ func (s *PostgresStore) CreateReservationTable() error {
 	_, err := s.db.Exec(`
 	CREATE TABLE IF NOT EXISTS reservation (
 		id VARCHAR(100) PRIMARY KEY,
-		listing_id SERIAL,
+		listing_id VARCHAR(100),
 		event_date TIMESTAMP NOT NULL,
-		account_id SERIAL,
+		account_id VARCHAR(100),
 		first_name VARCHAR(100),
 		last_name VARCHAR(100),
 		phone_number VARCHAR(100),
@@ -121,6 +122,7 @@ func (s *PostgresStore) CreateReservationTable() error {
 
 func (s *PostgresStore) CreateAccount(acc *Account) error {
 	Query := `INSERT INTO account (
+		id,
 		first_name,
 		last_name,
 		email,
@@ -129,9 +131,9 @@ func (s *PostgresStore) CreateAccount(acc *Account) error {
 		created_at,
 		updated_at
 	)
-	VALUES($1, $2, $3, $4, $5, $6, $7)`
+	VALUES($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	_, err := s.db.Exec(Query, acc.FirstName, acc.LastName, acc.Email, acc.PhoneNumber, acc.EncryptedPassword, acc.CreatedAt, acc.UpdatedAt)
+	_, err := s.db.Exec(Query, acc.ID, acc.FirstName, acc.LastName, acc.Email, acc.PhoneNumber, acc.EncryptedPassword, acc.CreatedAt, acc.UpdatedAt)
 
 	if err != nil {
 		return err
@@ -139,13 +141,13 @@ func (s *PostgresStore) CreateAccount(acc *Account) error {
 
 	return nil
 }
-func (s *PostgresStore) DeleteAccount(id int) error {
+func (s *PostgresStore) DeleteAccount(id string) error {
 	return nil
 }
 func (s *PostgresStore) UpdateAccount(*Account) error {
 	return nil
 }
-func (s *PostgresStore) GetAccountbyID(id int) (*Account, error) {
+func (s *PostgresStore) GetAccountbyID(id string) (*Account, error) {
 	return nil, nil
 }
 
@@ -153,6 +155,7 @@ func (s *PostgresStore) GetAccountbyID(id int) (*Account, error) {
 
 func (s *PostgresStore) CreateListing(listing *Listing) error {
 	Query := `INSERT INTO listing (
+		id,
 		host_id,
 		street,
 		city,
@@ -170,10 +173,10 @@ func (s *PostgresStore) CreateListing(listing *Listing) error {
 		created_at,
 		updated_at
 	)
-	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`
+	VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`
 
 	fmt.Println(listing.ID, listing.HostID, listing.Street, listing.City, listing.State, listing.PostalCode, listing.Country, listing.NumberOfGuests, listing.Occasion, listing.Pg, listing.Byod, listing.Notes, listing.Review, listing.EventDate, listing.CreatedAt, listing.UpdatedAt)
-	_, err := s.db.Exec(Query, listing.HostID, listing.Street, listing.City, listing.State, listing.PostalCode, listing.Country, listing.NumberOfGuests, listing.Occasion, listing.Pg, listing.Byod, listing.Notes, listing.Review, listing.EventDate, listing.EventType, listing.CreatedAt, listing.UpdatedAt)
+	_, err := s.db.Exec(Query, listing.ID, listing.HostID, listing.Street, listing.City, listing.State, listing.PostalCode, listing.Country, listing.NumberOfGuests, listing.Occasion, listing.Pg, listing.Byod, listing.Notes, listing.Review, listing.EventDate, listing.EventType, listing.CreatedAt, listing.UpdatedAt)
 
 	if err != nil {
 		return err
@@ -182,7 +185,7 @@ func (s *PostgresStore) CreateListing(listing *Listing) error {
 	return nil
 }
 
-func (s *PostgresStore) GetListingByID(id int) (*Listing, error) {
+func (s *PostgresStore) GetListingByID(id string) (*Listing, error) {
 	rows, err := s.db.Query(`SELECT * FROM listing WHERE id=$1`, id)
 
 	if err != nil {
@@ -245,6 +248,18 @@ func (s *PostgresStore) CreateReservation(reservation *Reservation) error {
 	}
 
 	return nil
+}
+
+//reviews
+
+func (s *PostgresStore) CreateReviewTable() error {
+	_, err := s.db.Exec(`
+		CREATE TABLE IF NOT EXISTS review (
+			id SERIAL PRIMARY KEY,
+			listing_id SERI
+		)
+	`)
+	return err
 }
 
 func scanIntolisting(rows *sql.Rows) (*Listing, error) {

@@ -2,10 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -88,7 +86,7 @@ func (s *APIServer) handleReservation(w http.ResponseWriter, r *http.Request) er
 func (s *APIServer) handleCreateListing(w http.ResponseWriter, r *http.Request) error {
 	//retrieving hostID
 	id, err := getID(r)
-	idStr := strconv.Itoa(id)
+	// idStr := strconv.Itoa(id)
 
 	if err != nil {
 		return err
@@ -100,7 +98,7 @@ func (s *APIServer) handleCreateListing(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 
-	listing, err := newListing(idStr, req.Street, req.City, req.State, req.PostalCode, req.Country, req.Occasion, req.Pg, req.Byod, req.Notes, req.EventDate, req.EventType)
+	listing, err := newListing(id, req.Street, req.City, req.State, req.PostalCode, req.Country, req.Occasion, req.Pg, req.Byod, req.Notes, req.EventDate, req.EventType)
 
 	if err != nil {
 		return err
@@ -140,7 +138,7 @@ func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) 
 
 func (s *APIServer) handleCreateReservation(w http.ResponseWriter, r *http.Request) error {
 	listingId, err := getID(r)
-	listingIdStr := strconv.Itoa(listingId)
+	// listingIdStr := strconv.Itoa(listingId)
 
 	if err != nil {
 		return err
@@ -158,7 +156,7 @@ func (s *APIServer) handleCreateReservation(w http.ResponseWriter, r *http.Reque
 		return err
 	}
 
-	reservation, err := newReservation(listingIdStr, req.AccountID, req.FirstName, req.LastName, req.PhoneNumber, req.Email, req.PartySize, req.Notes, listing.EventDate)
+	reservation, err := newReservation(listingId, req.AccountID, req.FirstName, req.LastName, req.PhoneNumber, req.Email, req.PartySize, req.Notes, listing.EventDate)
 
 	if err != nil {
 		return err
@@ -173,11 +171,11 @@ func (s *APIServer) handleCreateReservation(w http.ResponseWriter, r *http.Reque
 	return WriteJSON(w, http.StatusOK, reservation)
 }
 
-func getID(r *http.Request) (int, error) {
+func getID(r *http.Request) (string, error) {
 	idStr := mux.Vars(r)["id"]
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return id, fmt.Errorf("invalid id given %s", idStr)
-	}
-	return id, nil
+	// id, err := strconv.Atoi(idStr)
+	// if err != nil {
+	// 	return id, fmt.Errorf("invalid id given %s", idStr)
+	// }
+	return idStr, nil
 }

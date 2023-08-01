@@ -102,11 +102,12 @@ type CreateAccountRequest struct {
 
 type Account struct {
 	ID                string     `json:"id"`
-	FirstName         string     `json:"firstName"`
-	LastName          string     `json:"lastName"`
+	FirstName         string     `json:"first_name"`
+	LastName          string     `json:"last_name"`
 	Email             string     `json:"email"`
 	EncryptedPassword string     `json:"-"`
-	PhoneNumber       string     `json:"phoneNumber"`
+	Review            int64      `json:"review"`
+	PhoneNumber       string     `json:"phone_number"`
 	CreatedAt         time.Time  `json:"createdAt"`
 	UpdatedAt         time.Time  `json:"updatedAt"`
 	DeletedAt         *time.Time `json:"deletedAt"`
