@@ -100,7 +100,7 @@ func (s *APIServer) handleCreateListing(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 
-	listing, err := newListing(idStr, req.Address, req.Occasion, req.Pg, req.Byod, req.Notes, req.EventDate)
+	listing, err := newListing(idStr, req.Street, req.City, req.State, req.PostalCode, req.Country, req.Occasion, req.Pg, req.Byod, req.Notes, req.EventDate, req.EventType)
 
 	if err != nil {
 		return err

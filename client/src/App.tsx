@@ -19,7 +19,6 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
@@ -42,7 +41,7 @@ export default function App() {
         <Disclosure as="nav" className="bg-white shadow-sm">
           {({ open }) => (
             <>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6">
                 <div className="flex h-16 justify-between">
                   <div className="flex">
                     <div className="flex flex-shrink-0 items-center">
@@ -208,15 +207,15 @@ export default function App() {
         </Disclosure>
 
         <div className="py-10">
-          <header>
+          {/* <header>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
                 Dashboard
               </h1>
             </div>
-          </header>
+          </header> */}
           <main>
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl sm:px-6">
               {/* Your content */}
               <Listing />
             </div>
